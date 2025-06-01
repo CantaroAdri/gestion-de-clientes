@@ -22,7 +22,7 @@ function agregarCliente(
   apellido,
   dni,
   numeroContacto,
-  celularAReparar,
+  dispositivoAReparar,
   reparacion,
   costo
 ) {
@@ -32,7 +32,7 @@ function agregarCliente(
     apellido,
     dni,
     numeroContacto,
-    celularAReparar,
+    dispositivoAReparar,
     reparacion,
     costo,
   };
@@ -47,7 +47,7 @@ function verClientes() {
 
   let mensaje = "Clientes registrados:\n\n";
   registroDeClientes.forEach((c) => {
-    mensaje += `ID: ${c.id}\nNombre: ${c.nombre} ${c.apellido}\nDNI: ${c.dni}\n contacto: ${c.numeroContacto}\nCelular: ${c.celularAReparar}\nReparación: ${c.reparacion}\nCosto: $${c.costo}\n\n`;
+    mensaje += `ID: ${c.id}\nNombre: ${c.nombre} ${c.apellido}\nDNI: ${c.dni}\n contacto: ${c.numeroContacto}\nCelular: ${c.dispositivoAReparar}\nReparación: ${c.reparacion}\nCosto: $${c.costo}\n\n`;
   });
 
   alert(mensaje);
@@ -92,15 +92,15 @@ for (let i = 0; i < 3; i++) {
           let apellido = prompt("Apellido del cliente:");
           let dni = Number(prompt("DNI del cliente:"));
           let Contacto = Number(prompt("Numero de contacto"));
-          let celular = prompt("Celular a reparar:");
+          let dispositivo = prompt("dispositivo a reparar:");
           let reparacion = prompt("Reparación a realizar:");
           let costo = Number(prompt("Costo de la reparación:"));
           agregarCliente(
             nombre,
             apellido,
             dni,
-            1 | Contacto,
-            celular,
+            Contacto,
+            dispositivo,
             reparacion,
             costo
           );
