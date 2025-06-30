@@ -1,0 +1,131 @@
+header h1 {
+  text-align: center;
+}
+
+.navbar > .container,
+.navbar > .container-fluid,
+.navbar > .container-lg,
+.navbar > .container-md,
+.navbar > .container-sm,
+.navbar > .container-xl,
+.navbar > .container-xxl {
+  display: flex;
+  flex-wrap: inherit;
+  align-items: center;
+  justify-content: center;
+}
+
+/* MENU INPUT DE LOGIN */
+#loginSection {
+  position: relative;
+  margin: 10px;
+  padding: 10px;
+  width: 50%;
+  left: 25%;
+  justify-items: center;
+  text-align: center;
+}
+
+.imgEmpresa img {
+  background-repeat: no-repeat;
+  width: 10%;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+
+  border-radius: 50%;
+}
+
+.contenedor {
+  width: 50%;
+  justify-items: center;
+  text-align: center;
+  max-width: 400px;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+}
+
+#menuBotones button {
+  background-color: #a0d995;
+  color: black;
+  border: none;
+  border-radius: 5px;
+  box-shadow: 5px 5px 12px #c5d084;
+  margin: 10px;
+}
+
+#menuBotones button:hover {
+  background-color: #79b376;
+  color: white;
+}
+
+/* LISTA DE CLIENTES */
+#listaClientes {
+  display: none;
+  margin-top: 20px;
+  white-space: pre-wrap;
+  font-family: monospace;
+}
+
+/* FORMULARIO */
+
+#formularioCliente {
+  display: none; /* Oculta el formulario por defecto */
+  margin-top: 20px;
+}
+
+label {
+  display: block;
+  margin-top: 10px;
+}
+
+input {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  box-sizing: border-box;
+}
+
+#cardClientes {
+  margin: 10px;
+  padding: 10px;
+  width: 50%;
+  justify-items: center;
+  text-align: center;
+
+  border-radius: 12px;
+}
+
+.card-body {
+  display: grid;
+  align-content: space-between;
+  justify-content: space-between;
+  justify-items: center;
+}
+
+.text-dark {
+  position: relative;
+  right: 50px;
+}
+
+/* PIE DE PAGINA */
+footer {
+  margin: 10px;
+  padding: 10px;
+  justify-items: center;
+  text-align: center;
+}
+
+.border-primary {
+  position: relative;
+  left: 35%;
+}
+
+@media (min-width: 991px) {
+  .border-primary {
+    position: relative;
+    left: 80%;
+  }
+}

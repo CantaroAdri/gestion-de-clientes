@@ -1,163 +1,213 @@
-let admin = "admin";
-let pass = 1234;
-let logeo = false;
-const registroDeClientes = [];
-
-let estado = [];
+// ==== UTILIDADES Y CLASE CLIENTE ====
 
 function creadoraDeIdAleatorio() {
   return Math.floor(Math.random() * 900000) + 100000;
 }
 
-
-function buscadorPorID(id) {
-  return registroDeClientes.findIndex(cliente => cliente.id === id);
-}
-
-
-function login(usuario, password) {
-  if (usuario === admin && password == pass) {
-    alert("Se logeó correctamente");
-    return true;
-  } else {
-    alert("Usuario o contraseña incorrectos");
-    return false;
-  }
-}
-
-class clienteCreado{
-  constructor(nombre, apellido, dni, numeroContacto, dispositivoAReparar, reparacion, costo){
-this.nombre = nombre
-this.apellido = apellido
-this.dni = dni
-this.numeroContacto = numeroContacto
-this.dispositivoAReparar = dispositivoAReparar
-this.reparacion = reparacion
-this.costo = costo
-this.estado = "En espera"
-this.id = creadoraDeIdAleatorio()
-  }
-
-  setEstado (nuevoEstado){
-    this.estado = nuevoEstado
-  }
-}
-
-function agregarCliente(nombre, apellido, dni, numeroContacto, dispositivoAReparar, reparacion, costo) {
-  let nuevoCliente = new clienteCreado (nombre,
+class clienteCreado {
+  constructor(
+    nombre,
     apellido,
     dni,
     numeroContacto,
     dispositivoAReparar,
     reparacion,
-    costo,)
-  
-  registroDeClientes.push(nuevoCliente);
+    costo
+  ) {
+    this.nombre = nombre;
+    this.apellido = apellido;
+    this.dni = dni;
+    this.numeroContacto = numeroContacto;
+    this.dispositivoAReparar = dispositivoAReparar;
+    this.reparacion = reparacion;
+    this.costo = costo;
+    this.estado = "En espera";
+    this.id = creadoraDeIdAleatorio();
+  }
+
+  setEstado(nuevoEstado) {
+    this.estado = nuevoEstado;
+  }
 }
 
-function verClientes() {
+// ==== MANEJO DE CLIENTES ====
+
+const datosGuardados = JSON.parse(localStorage.getItem("clientes")) || [];
+const registroDeClientes = datosGuardados.map((c) => {
+  const cliente = new clienteCreado(
+    c.nombre,
+    c.apellido,
+    c.dni,
+    c.numeroContacto,
+    c.dispositivoAReparar,
+    c.reparacion,
+    c.costo
+  );
+  cliente.id = c.id;
+  cliente.estado = c.estado;
+  return cliente;
+});
+
+function guardarClientes() {
+  localStorage.setItem("clientes", JSON.stringify(registroDeClientes));
+}
+
+function agregarCliente(cliente) {
+  registroDeClientes.push(cliente);
+  guardarClientes();
+}
+
+function eliminarCliente(id) {
+  const index = registroDeClientes.findIndex((c) => c.id === id);
+  if (index !== -1) {
+    registroDeClientes.splice(index, 1);
+    guardarClientes();
+    verClientesHTML();
+  }
+}
+
+function verClientesHTML() {
+  const listaDiv = document.getElementById("listaClientes");
+
   if (registroDeClientes.length === 0) {
-    alert("Aún no hay clientes registrados.");
+    listaDiv.innerText = "No hay clientes registrados.";
     return;
   }
 
-  let mensaje = "Clientes registrados:\n\n";
+  let mensaje =
+    '<div class="container d-flex flex-column align-items-center gap-4">';
   registroDeClientes.forEach((c) => {
-    mensaje += `ID: ${c.id}\nNombre: ${c.nombre} ${c.apellido}\nDNI: ${c.dni}\n contacto: ${c.numeroContacto}\nCelular: ${c.dispositivoAReparar}\nReparación: ${c.reparacion}\nCosto: $${c.costo}\nEstado: ${c.estado}\n\n`;
+    mensaje += `
+      <div class="card border-primary shadow-sm" style="width: 400px; height: 300px;">
+        <div class="card-body bg-light rounded overflow-auto">
+          <h5 class="card-title text-primary">${c.nombre} ${c.apellido}</h5>
+          <p class="card-text text-dark">
+            <strong>ID:</strong> ${c.id}<br>
+            <strong>DNI:</strong> ${c.dni}<br>
+            <strong>Contacto:</strong> ${c.numeroContacto}<br>
+            <strong>Dispositivo:</strong> ${c.dispositivoAReparar}<br>
+            <strong>Reparación:</strong> ${c.reparacion}<br>
+            <strong>Costo:</strong> $${c.costo}<br>
+            <strong>Estado:</strong> ${c.estado}<br>
+          </p>
+          <button class="btn btn-danger btn-sm me-1" onclick="eliminarCliente(${c.id})">Eliminar</button>
+          <button class="btn btn-secondary btn-sm" onclick="editarEstadoPrompt(${c.id})">Editar Estado</button>
+        </div>
+      </div>
+    `;
   });
-
-  alert(mensaje);
+  mensaje += "</div>";
+  listaDiv.innerHTML = mensaje;
 }
 
-const estadoDeReparacion = (id, estado) =>{
-  let index = buscadorPorID(id)
-
-  registroDeClientes[index].setEstado(estado)
-}
-
-function cierreDeCaja() {
-  if (registroDeClientes.length === 0) {
-    alert("Aún no hay dinero registrado.");
-    return;
+function editarEstadoHTML(id, nuevoEstado) {
+  const index = registroDeClientes.findIndex((c) => c.id === id);
+  if (index !== -1) {
+    registroDeClientes[index].setEstado(nuevoEstado);
+    guardarClientes();
+    alert("Estado actualizado correctamente.");
+    verClientesHTML();
+  } else {
+    alert("Cliente no encontrado.");
   }
-  let caja = 0;
-
-  registroDeClientes.forEach((cliente) => {
-    caja += Number(cliente.costo);
-  });
-
-  alert("Total recaudado en la caja: $" + caja);
 }
 
-for (let i = 0; i < 3; i++) {
-  let usuario = prompt("Ingrese nombre de usuario");
-  let password = prompt("Ingrese contraseña");
+function editarEstadoPrompt(id) {
+  const nuevoEstado = prompt("Ingrese el nuevo estado para el cliente:");
+  if (nuevoEstado) {
+    editarEstadoHTML(id, nuevoEstado);
+  }
+}
 
-  logeo = login(usuario, password);
-  if (logeo) {
-    let salir = false;
+function calcularCajaHTML() {
+  let total = registroDeClientes.reduce(
+    (acc, cliente) => acc + Number(cliente.costo),
+    0
+  );
+  alert("Total en caja: $" + total);
+}
 
-    while (!salir) {
-      let menu = Number(
-        prompt(
-          "Sistema de Gestion de Clientes\n" +
-            "1 - Agregar cliente\n" +
-            "2 - Ver lista de clientes\n" +
-            "3 - Total de ingresos\n" +
-            "4 - Estado de la Reparacion\n" +
-            "0 - Salir"
-        )
-      );
+// ==== LOGIN Y USUARIOS ====
 
-      switch (menu) {
-        case 1:
-          let nombre = prompt("Nombre del cliente:");
-          let apellido = prompt("Apellido del cliente:");
-          let dni = Number(prompt("DNI del cliente:"));
-          let Contacto = Number(prompt("Numero de contacto"));
-          let dispositivo = prompt("dispositivo a reparar:");
-          let reparacion = prompt("Reparación a realizar:");
-          let costo = Number(prompt("Costo de la reparación:"));
-          agregarCliente(
-            nombre,
-            apellido,
-            dni,
-            Contacto,
-            dispositivo,
-            reparacion,
-            costo
-          );
-          break;
+if (!sessionStorage.getItem("nombreDeUsusario")) {
+  sessionStorage.setItem("nombreDeUsusario", "admin");
+  sessionStorage.setItem("passDelUsusario", "1234");
+}
 
-        case 2:
-          verClientes();
-          break;
+function login(usuario, contrasena) {
+  const guardadoUsuario = sessionStorage.getItem("nombreDeUsusario");
+  const guardadoPass = sessionStorage.getItem("passDelUsusario");
+  return usuario === guardadoUsuario && contrasena === guardadoPass;
+}
 
-        case 3:
-          cierreDeCaja();
-          break; 
-        
-        case 4:
-          let idBuscado = Number(prompt("Ingrese ID del cliente:"));
-          let nuevoEstado = prompt("Ingrese el nuevo estado de la reparación:");
-          estadoDeReparacion(idBuscado, nuevoEstado);
-          break;
+function registrarNuevoUsuario(usuario, pass) {
+  if (usuario && pass) {
+    sessionStorage.setItem("nombreDeUsusario", usuario);
+    sessionStorage.setItem("passDelUsusario", pass);
+    alert("Usuario registrado correctamente.");
+  }
+}
 
+// ==== EVENTOS DOM ====
 
-        case 0:
-          alert("Saliendo del sistema. ¡Hasta luego!");
-          salir = true;
-          break;
+document.addEventListener("DOMContentLoaded", () => {
+  const form = document.getElementById("formularioCliente");
+  const listaDiv = document.getElementById("listaClientes");
 
-        default:
-          alert("Opción inválida.");
-      }
+  document.getElementById("btnLogin").addEventListener("click", () => {
+    const user = document.getElementById("usuario").value;
+    const pass = document.getElementById("password").value;
+    if (login(user, pass)) {
+      alert("Login exitoso");
+      document.getElementById("loginSection").style.display = "none";
+      document.getElementById("appSection").style.display = "block";
+    } else {
+      alert("Usuario o contraseña incorrectos");
     }
+  });
 
-    break;
-  }
-}
+  document
+    .getElementById("btnMostrarFormulario")
+    .addEventListener("click", () => {
+      form.style.display = form.style.display === "none" ? "block" : "none";
+    });
 
-if (!logeo) {
-  alert("Cuenta bloqueada por demasiados intentos fallidos.");
-}
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const nuevo = new clienteCreado(
+      form.nombre.value,
+      form.apellido.value,
+      form.dni.value,
+      form.contacto.value,
+      form.dispositivo.value,
+      form.reparacion.value,
+      form.costo.value
+    );
+    agregarCliente(nuevo);
+    form.reset();
+    form.style.display = "none";
+    verClientesHTML();
+  });
+
+  let listaVisible = false;
+  document.getElementById("btnVerClientes").addEventListener("click", () => {
+    listaVisible = !listaVisible;
+    const listaDiv = document.getElementById("listaClientes");
+    if (listaVisible) {
+      verClientesHTML();
+      listaDiv.style.display = "block";
+    } else {
+      listaDiv.style.display = "none";
+    }
+  });
+
+  document.getElementById("btnEditarEstado").addEventListener("click", () => {
+    const id = Number(prompt("Ingrese el ID del cliente"));
+    const nuevoEstado = prompt("Ingrese el nuevo estado");
+    editarEstadoHTML(id, nuevoEstado);
+  });
+
+  document.getElementById("btnCaja").addEventListener("click", () => {
+    calcularCajaHTML();
+  });
+});
