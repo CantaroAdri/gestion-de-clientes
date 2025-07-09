@@ -91,7 +91,7 @@ input {
 #cardClientes {
   margin: 10px;
   padding: 10px;
-  width: 50%;
+  width: 100%;
   justify-items: center;
   text-align: center;
 
@@ -108,6 +108,27 @@ input {
 .text-dark {
   position: relative;
   right: 50px;
+}
+
+.card-body p {
+  height: 100px;
+}
+
+.datos1,
+.cajaDeDatos {
+  font-size: 0.9rem;
+  text-align: center;
+  line-height: 30px;
+}
+
+.cajaCol {
+  border: 1px solid blue;
+}
+
+.btnCol {
+  position: relative;
+  left: 900px;
+  top: -110px;
 }
 
 /* PIE DE PAGINA */
@@ -127,5 +148,37 @@ footer {
   .border-primary {
     position: relative;
     left: 80%;
+  }
+
+  /* Que las columnas no se rompan ni desborden en pantallas pequeñas */
+  @media (max-width: 768px) {
+    #listaClientes .row > .col {
+      font-size: 0.8rem;
+      padding: 4px;
+    }
+
+    #listaClientes .row .btn {
+      margin-top: 5px;
+    }
+
+    #listaClientes .row {
+      flex-wrap: wrap;
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  /* Asegura que en pantallas pequeñas se muestre en columnas apiladas */
+  @media (max-width: 576px) {
+    .cliente-fila > div {
+      display: block;
+      width: 100%;
+      font-size: 0.95rem;
+    }
+
+    .cliente-fila {
+      padding: 10px;
+      background-color: #f8f9fa;
+    }
   }
 }

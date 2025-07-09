@@ -74,29 +74,42 @@ function verClientesHTML() {
     return;
   }
 
-  let mensaje =
-    '<div class="container d-flex flex-column align-items-center gap-4">';
+  let mensaje = `
+      
+  <div class="container ">
+    <div class="row bg-primary text-white fw-bold text-center py-2">
+      <div class="col">ID</div>
+      <div class="col">Nombre</div>
+      <div class="col">DNI</div>
+      <div class="col">Contacto</div>
+      <div class="col">Dispositivo</div>
+      <div class="col">Reparación</div>
+      <div class="col">Costo</div>
+      <div class="col">Estado</div>
+      
+    </div>
+`;
+
   registroDeClientes.forEach((c) => {
     mensaje += `
-      <div class="card border-primary shadow-sm" style="width: 400px; height: 300px;">
-        <div class="card-body bg-light rounded overflow-auto">
-          <h5 class="card-title text-primary">${c.nombre} ${c.apellido}</h5>
-          <p class="card-text text-dark">
-            <strong>ID:</strong> ${c.id}<br>
-            <strong>DNI:</strong> ${c.dni}<br>
-            <strong>Contacto:</strong> ${c.numeroContacto}<br>
-            <strong>Dispositivo:</strong> ${c.dispositivoAReparar}<br>
-            <strong>Reparación:</strong> ${c.reparacion}<br>
-            <strong>Costo:</strong> $${c.costo}<br>
-            <strong>Estado:</strong> ${c.estado}<br>
-          </p>
-          <button class="btn btn-danger btn-sm me-1" onclick="eliminarCliente(${c.id})">Eliminar</button>
-          <button class="btn btn-secondary btn-sm" onclick="editarEstadoPrompt(${c.id})">Editar Estado</button>
-        </div>
+    <div class="row g-3 border rounded p-2 my-2 cliente-fila">
+      <div class="col-12 col-sm"><strong>ID:</strong> ${c.id}</div>
+      <div class="col-12 col-sm"><strong>Nombre:</strong> ${c.nombre} ${c.apellido}</div>
+      <div class="col-12 col-sm"><strong>DNI:</strong> ${c.dni}</div>
+      <div class="col-12 col-sm"><strong>Contacto:</strong> ${c.numeroContacto}</div>
+      <div class="col-12 col-sm"><strong>Dispositivo:</strong> ${c.dispositivoAReparar}</div>
+      <div class="col-12 col-sm"><strong>Reparación:</strong> ${c.reparacion}</div>
+      <div class="col-12 col-sm"><strong>Costo:</strong> $${c.costo}</div>
+      <div class="col-12 col-sm"><strong>Estado:</strong> ${c.estado}</div>
+      <div class="col-12 col-sm-auto d-flex flex-wrap gap-1">      
       </div>
-    `;
+        <button class="btn btn-danger btn-sm me-1" onclick="eliminarCliente (${c.id})">Eliminar</button>
+        <button class="btn btn-secondary btn-sm" onclick="editarEstadoPrompt(${c.id})">Editar</button>
+    </div>
+  `;
   });
-  mensaje += "</div>";
+
+  mensaje += `</div>`;
   listaDiv.innerHTML = mensaje;
 }
 
@@ -140,14 +153,6 @@ function login(usuario, contrasena) {
   return usuario === guardadoUsuario && contrasena === guardadoPass;
 }
 
-function registrarNuevoUsuario(usuario, pass) {
-  if (usuario && pass) {
-    sessionStorage.setItem("nombreDeUsusario", usuario);
-    sessionStorage.setItem("passDelUsusario", pass);
-    alert("Usuario registrado correctamente.");
-  }
-}
-
 // ==== EVENTOS DOM ====
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -158,13 +163,33 @@ document.addEventListener("DOMContentLoaded", () => {
     const user = document.getElementById("usuario").value;
     const pass = document.getElementById("password").value;
     if (login(user, pass)) {
-      alert("Login exitoso");
+      Swal.fire({
+        title: "Login Exitoso!",
+        icon: "success",
+        draggable: true,
+      });
       document.getElementById("loginSection").style.display = "none";
       document.getElementById("appSection").style.display = "block";
     } else {
-      alert("Usuario o contraseña incorrectos");
+      Swal.fire({
+        title: "Usuario o contraseña incorrectos",
+        icon: "warning",
+        draggable: true,
+      });
     }
   });
+
+  document
+    .getElementById("registrarFormulario")
+    .addEventListener("click", () => {
+      Swal.fire({
+        position: "top-end",
+        icon: "success",
+        title: "cliente Registrado con exito",
+        showConfirmButton: false,
+        timer: 1500,
+      });
+    });
 
   document
     .getElementById("btnMostrarFormulario")
