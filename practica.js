@@ -1,6 +1,3 @@
-// URL API de pokemones
-const url = "https://pokeapi.co/api/v2/pokemon/";
-
 function creadoraDeIdAleatorio() {
   return Math.floor(Math.random() * 900000) + 100000;
 }
@@ -24,7 +21,7 @@ class clienteCreado {
     this.costo = costo;
     this.estado = "En espera";
     this.id = creadoraDeIdAleatorio();
-    this.pokemon = "";
+    this.pokemon = null; // Imagen de Pokémon asociada
   }
 
   setEstado(nuevoEstado) {
@@ -47,7 +44,7 @@ const registroDeClientes = datosGuardados.map((c) => {
   );
   cliente.id = c.id;
   cliente.estado = c.estado;
-  cliente.pokemon = c.pokemon;
+  cliente.pokemon = c.pokemon || null;
   return cliente;
 });
 
@@ -63,6 +60,7 @@ function agregarCliente(cliente) {
     verClientesHTML();
   });
 }
+
 function eliminarCliente(id) {
   const index = registroDeClientes.findIndex((c) => c.id === id);
   if (index !== -1) {
@@ -80,72 +78,67 @@ function verClientesHTML() {
     return;
   }
 
-  let mensaje = `
-      
-  <div class="container ">
-    <div class="row bg-primary text-white fw-bold text-center py-2">
-      <div class="col">ID</div>
-      <div class="col">Nombre</div>
-      <div class="col">DNI</div>
-      <div class="col">Contacto</div>
-      <div class="col">Dispositivo</div>
-      <div class="col">Reparación</div>
-      <div class="col">Costo</div>
-      <div class="col">Estado</div>
-      
-    </div>
-`;
-
+  listaDiv.innerHTML = "";
   registroDeClientes.forEach((c) => {
-    mensaje += `
-    <div class="row g-3 border rounded p-2 my-2 cliente-fila">
-      <div class="col-12 col-sm"><strong>ID:</strong> ${c.id}</div>
-      <div class="col-12 col-sm"><strong>Nombre:</strong> ${c.nombre} ${
-      c.apellido
-    }</div>
-      <div class="col-12 col-sm"><strong>DNI:</strong> ${c.dni}</div>
-      <div class="col-12 col-sm"><strong>Contacto:</strong> ${
-        c.numeroContacto
-      }</div>
-      <div class="col-12 col-sm"><strong>Dispositivo:</strong> ${
-        c.dispositivoAReparar
-      }</div>
-      <div class="col-12 col-sm"><strong>Reparación:</strong> ${
-        c.reparacion
-      }</div>
-      <div class="col-12 col-sm"><strong>Costo:</strong> $${c.costo}</div>
-      <div class="col-12 col-sm"><strong>Estado:</strong> ${c.estado}</div>
-      
-      <div class="col">
-      <img src="${
-        c.pokemon ||
-        "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png"
-      }" alt="pokemon" style="height:50px"></div>
-      <div class="col-12 col-sm-auto d-flex flex-wrap gap-1">      
+    const fila = document.createElement("div");
+    fila.className = "cliente-fila row align-items-center mb-2";
+    fila.innerHTML = `
+      <div class="col datos1">${c.id}</div>
+      <div class="col cajaDeDatos">ID</div>
+      <div class="col datos1">${c.nombre} ${c.apellido}</div>
+      <div class="col cajaDeDatos">Nombre</div>
+      <div class="col datos1">${c.dni}</div>
+      <div class="col cajaDeDatos">DNI</div>
+      <div class="col datos1">${c.numeroContacto}</div>
+      <div class="col cajaDeDatos">Contacto</div>
+      <div class="col datos1">${c.dispositivoAReparar}</div>
+      <div class="col cajaDeDatos">Dispositivo</div>
+      <div class="col datos1">${c.reparacion}</div>
+      <div class="col cajaDeDatos">Reparacion</div>
+      <div class="col datos1">${c.costo}</div>
+      <div class="col cajaDeDatos">Costo</div>
+      <div class="col datos1">${c.estado}</div>
+      <div class="col cajaDeDatos">Estado</div>
+      <div class="col"><img src="${c.pokemon}" alt="pokemon" style="height:50px"></div>
+      <div class="col-auto">
+        <button class="btn btn-danger btn-sm me-1 btn-eliminar">Eliminar</button>
+        <button class="btn btn-secondary btn-sm" onclick="editarEstadoPrompt(${c.id})">Editar</button>
       </div>
-        <button class="btn btn-danger btn-sm me-1" onclick="eliminarCliente (${
-          c.id
-        })">Eliminar</button>
-        <button class="btn btn-secondary btn-sm" onclick="editarEstadoPrompt(${
-          c.id
-        })">Editar</button>
-    </div>
-  `;
-  });
+    `;
 
-  mensaje += `</div>`;
-  listaDiv.innerHTML = mensaje;
+    fila.querySelector(".btn-eliminar").addEventListener("click", () => {
+      Swal.fire({
+        title: "¿Estás seguro?",
+        text: "No podrás revertir esta acción",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Sí, eliminar",
+        cancelButtonText: "Cancelar",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          eliminarCliente(c.id);
+          Swal.fire({
+            title: "Eliminado",
+            text: "El cliente ha sido eliminado.",
+            icon: "success",
+            timer: 2000,
+            showConfirmButton: false,
+          });
+        }
+      });
+    });
+
+    listaDiv.appendChild(fila);
+  });
 }
 
-async function obtenerPokemonAleatorio() {
+function obtenerPokemonAleatorio() {
   const id = Math.floor(Math.random() * 150) + 1;
-  try {
-    let res = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
-    let data = await res.json();
-    return data.sprites.front_default;
-  } catch (error) {
-    console.error("Error al obtener los datos:", error);
-  }
+  return fetch(`https://pokeapi.co/api/v2/pokemon/${id}`)
+    .then((res) => res.json())
+    .then((data) => data.sprites.front_default);
 }
 
 function editarEstadoHTML(id, nuevoEstado) {
@@ -153,7 +146,6 @@ function editarEstadoHTML(id, nuevoEstado) {
   if (index !== -1) {
     registroDeClientes[index].setEstado(nuevoEstado);
     guardarClientes();
-
     alert("Estado actualizado correctamente.");
     verClientesHTML();
   } else {
@@ -189,6 +181,14 @@ function login(usuario, contrasena) {
   return usuario === guardadoUsuario && contrasena === guardadoPass;
 }
 
+function registrarNuevoUsuario(usuario, pass) {
+  if (usuario && pass) {
+    sessionStorage.setItem("nombreDeUsusario", usuario);
+    sessionStorage.setItem("passDelUsusario", pass);
+    alert("Usuario registrado correctamente.");
+  }
+}
+
 // ==== EVENTOS DOM ====
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -199,33 +199,13 @@ document.addEventListener("DOMContentLoaded", () => {
     const user = document.getElementById("usuario").value;
     const pass = document.getElementById("password").value;
     if (login(user, pass)) {
-      Swal.fire({
-        title: "Login Exitoso!",
-        icon: "success",
-        draggable: true,
-      });
+      alert("Login exitoso");
       document.getElementById("loginSection").style.display = "none";
       document.getElementById("appSection").style.display = "block";
     } else {
-      Swal.fire({
-        title: "Usuario o contraseña incorrectos",
-        icon: "warning",
-        draggable: true,
-      });
+      alert("Usuario o contraseña incorrectos");
     }
   });
-
-  document
-    .getElementById("registrarFormulario")
-    .addEventListener("click", () => {
-      Swal.fire({
-        position: "top-end",
-        icon: "success",
-        title: "cliente Registrado con exito",
-        showConfirmButton: false,
-        timer: 1500,
-      });
-    });
 
   document
     .getElementById("btnMostrarFormulario")
@@ -247,7 +227,6 @@ document.addEventListener("DOMContentLoaded", () => {
     agregarCliente(nuevo);
     form.reset();
     form.style.display = "none";
-    verClientesHTML();
   });
 
   let listaVisible = false;
