@@ -153,11 +153,11 @@ function editarEstadoHTML(id, nuevoEstado) {
   if (index !== -1) {
     registroDeClientes[index].setEstado(nuevoEstado);
     guardarClientes();
+    Swal.fire("Estado actualizado correctamente.");
 
-    alert("Estado actualizado correctamente.");
     verClientesHTML();
   } else {
-    alert("Cliente no encontrado.");
+    Swal.fire("Cliente no encontrado.");
   }
 }
 
@@ -173,7 +173,7 @@ function calcularCajaHTML() {
     (acc, cliente) => acc + Number(cliente.costo),
     0
   );
-  alert("Total en caja: $" + total);
+  Swal.fire("Total en caja: $" + total);
 }
 
 // ==== LOGIN Y USUARIOS ====
